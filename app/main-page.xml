@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo">
+    <ActionBar title="Tiffin Tracker" />
+    <TabView selectedIndex="{{ selectedTabIndex }}">
+        <TabView.items>
+            <TabViewItem title="New Order">
+                <TabViewItem.view>
+                    <StackLayout class="p-4">
+                        <Label text="Date:" class="text-lg" />
+                        <Label text="{{ currentDate }}" class="text-lg font-bold mb-2" />
+                        
+                        <Label text="Number of Tiffins:" class="text-lg" />
+                        <TextField text="{{ numberOfTiffins }}" keyboardType="number" class="input mb-2" />
+                        
+                        <Label text="Price per Tiffin:" class="text-lg" />
+                        <Label text="{{ pricePerTiffin }}" class="text-lg font-bold mb-2" />
+                        
+                        <Label text="Total Amount:" class="text-lg" />
+                        <Label text="{{ totalAmount }}" class="text-lg font-bold mb-4" />
+                        
+                        <Button text="Submit Order" tap="{{ submitOrder }}" class="-primary" />
+                    </StackLayout>
+                </TabViewItem.view>
+            </TabViewItem>
+            
+            <TabViewItem title="History">
+                <TabViewItem.view>
+                    <GridLayout rows="auto, auto, *">
+                        <StackLayout row="0" class="p-4">
+                            <Label text="Total Statistics" class="text-xl font-bold" />
+                            <Label text="{{ 'Total Orders: ' + stats.totalOrders }}" class="text-lg" />
+                            <Label text="{{ 'Total Tiffins: ' + stats.totalTiffins }}" class="text-lg" />
+                            <Label text="{{ 'Total Amount: ₹' + stats.totalAmount }}" class="text-lg" />
+                        </StackLayout>
+                        
+                        <DatePicker row="1" class="m-4" year="{{ selectedYear }}" month="{{ selectedMonth }}" 
+                                  day="1" dateChanged="{{ onDateChanged }}" />
+                        
+                        <ListView row="2" items="{{ orders }}" class="list-group">
+                            <ListView.itemTemplate>
+                                <StackLayout class="list-group-item">
+                                    <Label text="{{ date }}" class="text-lg font-bold" />
+                                    <Label text="{{ 'Tiffins: ' + numberOfTiffins }}" />
+                                    <Label text="{{ 'Amount: ₹' + totalAmount }}" />
+                                </StackLayout>
+                            </ListView.itemTemplate>
+                        </ListView>
+                    </GridLayout>
+                </TabViewItem.view>
+            </TabViewItem>
+        </TabView.items>
+    </TabView>
+</Page>

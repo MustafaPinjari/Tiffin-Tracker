@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" 
+      xmlns:components="components"
+      navigatingTo="onNavigatingTo" 
+      class="page">
+    <ScrollView>
+        <StackLayout>
+            <components:header title="Tiffin Tracker" subtitle="{{ currentDate }}" />
+            <components:stats-card orders="{{ todayStats.orders }}" 
+                                 tiffins="{{ todayStats.tiffins }}"
+                                 amount="{{ todayStats.amount }}" />
+
+            <!-- New Order Card -->
+            <StackLayout class="card">
+                <Label text="New Order" class="text-xl font-bold mb-4 text-indigo-600" />
+                
+                <components:tiffin-counter count="{{ numberOfTiffins }}"
+                                         onIncrease="{{ increaseTiffins }}"
+                                         onDecrease="{{ decreaseTiffins }}" />
+
+                <!-- Price Details -->
+                <StackLayout class="bg-gray-50 p-4 rounded-lg mb-4">
+                    <GridLayout columns="*, auto" class="mb-2">
+                        <Label text="Price per tiffin" class="text-gray-600" />
+                        <Label text="{{ '₹' + pricePerTiffin }}" class="font-medium" col="1" />
+                    </GridLayout>
+                    <GridLayout columns="*, auto">
+                        <Label text="Total Amount" class="text-lg font-bold text-indigo-600" />
+                        <Label text="{{ '₹' + totalAmount }}" 
+                               class="text-xl font-bold text-indigo-600" col="1" />
+                    </GridLayout>
+                </StackLayout>
+
+                <!-- Action Buttons -->
+                <Button text="Place Order" tap="{{ submitOrder }}" 
+                        class="btn-primary" />
+                <Button text="View History" tap="{{ navigateToHistory }}" 
+                        class="btn-secondary" />
+            </StackLayout>
+
+            <!-- Recent Orders -->
+            <StackLayout class="card">
+                <Label text="Recent Orders" class="text-xl font-bold mb-4 text-indigo-600" />
+                <ListView items="{{ recentOrders }}" height="200">
+                    <ListView.itemTemplate>
+                        <GridLayout columns="*, auto" class="p-2">
+                            <StackLayout col="0">
+                                <Label text="{{ date }}" class="font-medium" />
+                                <Label text="{{ numberOfTiffins + ' Tiffins' }}" 
+                                       class="text-sm text-gray-500" />
+                            </StackLayout>
+                            <Label text="{{ '₹' + totalAmount }}" 
+                                   class="text-lg font-bold text-indigo-600" col="1" />
+                        </GridLayout>
+                    </ListView.itemTemplate>
+                </ListView>
+            </StackLayout>
+        </StackLayout>
+    </ScrollView>
+</Page>

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Page xmlns="http://schemas.nativescript.org/tns.xsd" navigatingTo="onNavigatingTo" class="page">
+    <GridLayout rows="auto, auto, *">
+        <!-- Modern Header -->
+        <StackLayout row="0" class="header">
+            <GridLayout columns="auto, *, auto">
+                <Button text="←" tap="{{ goBack }}" 
+                        class="text-white text-2xl bg-transparent" col="0" />
+                <Label text="Order History" 
+                       class="text-2xl text-white font-bold text-center" col="1" />
+                <Button text="↓" tap="{{ exportToExcel }}" 
+                        class="text-white text-xl bg-transparent" col="2" />
+            </GridLayout>
+        </StackLayout>
+
+        <!-- Monthly Stats -->
+        <StackLayout row="1" class="card">
+            <DatePicker date="{{ selectedDate }}" 
+                       class="mb-4 text-center text-indigo-600" />
+            
+            <GridLayout columns="*, *, *" class="mt-2">
+                <StackLayout col="0" class="stat-card">
+                    <Label text="{{ stats.totalOrders }}" 
+                           class="text-2xl font-bold text-indigo-600 text-center" />
+                    <Label text="Orders" class="text-sm text-gray-600 text-center" />
+                </StackLayout>
+                <StackLayout col="1" class="stat-card mx-2">
+                    <Label text="{{ stats.totalTiffins }}" 
+                           class="text-2xl font-bold text-indigo-600 text-center" />
+                    <Label text="Tiffins" class="text-sm text-gray-600 text-center" />
+                </StackLayout>
+                <StackLayout col="2" class="stat-card">
+                    <Label text="{{ '₹' + stats.totalAmount }}" 
+                           class="text-2xl font-bold text-indigo-600 text-center" />
+                    <Label text="Revenue" class="text-sm text-gray-600 text-center" />
+                </StackLayout>
+            </GridLayout>
+        </StackLayout>
+
+        <!-- Orders List -->
+        <ListView row="2" items="{{ orders }}" class="list-group">
+            <ListView.itemTemplate>
+                <StackLayout class="card">
+                    <GridLayout columns="*, auto">
+                        <StackLayout col="0">
+                            <Label text="{{ date }}" class="text-lg font-medium" />
+                            <Label text="{{ numberOfTiffins + ' Tiffins' }}" 
+                                   class="text-sm text-gray-500" />
+                        </StackLayout>
+                        <StackLayout col="1" class="text-right">
+                            <Label text="{{ '₹' + totalAmount }}" 
+                                   class="text-xl font-bold text-indigo-600" />
+                        </StackLayout>
+                    </GridLayout>
+                </StackLayout>
+            </ListView.itemTemplate>
+        </ListView>
+    </GridLayout>
+</Page>

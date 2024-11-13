@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns="http://schemas.nativescript.org/tns.xsd" rows="auto" columns="*, auto, auto, auto, *" class="mb-6">
+    <Button text="-" tap="{{ onDecrease }}" 
+            class="counter-btn animate-press" row="0" col="1" />
+    <StackLayout row="0" col="2" class="mx-4 text-center">
+        <Label text="{{ count }}" class="text-4xl font-bold text-indigo-600 animate-scale" />
+        <Label text="Tiffins" class="text-sm text-gray-500" />
+    </StackLayout>
+    <Button text="+" tap="{{ onIncrease }}" 
+            class="counter-btn animate-press" row="0" col="3" />
+</GridLayout>

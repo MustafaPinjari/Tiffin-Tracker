@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns="http://schemas.nativescript.org/tns.xsd" columns="*, *, *" class="card stats-card">
+    <StackLayout col="0" class="text-center stat-item">
+        <Label text="{{ orders }}" class="text-2xl font-bold text-indigo-600 animate-bounce" />
+        <Label text="Orders" class="text-sm text-gray-500" />
+    </StackLayout>
+    <StackLayout col="1" class="text-center stat-item">
+        <Label text="{{ tiffins }}" class="text-2xl font-bold text-indigo-600 animate-bounce" />
+        <Label text="Tiffins" class="text-sm text-gray-500" />
+    </StackLayout>
+    <StackLayout col="2" class="text-center stat-item">
+        <Label text="{{ '₹' + amount }}" class="text-2xl font-bold text-indigo-600 animate-bounce" />
+        <Label text="Revenue" class="text-sm text-gray-500" />
+    </StackLayout>
+</GridLayout>

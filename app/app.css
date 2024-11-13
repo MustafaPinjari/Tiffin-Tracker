@@ -1,0 +1,125 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.page {
+    background-color: #F3F4F6;
+}
+
+.header {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    padding: 16;
+}
+
+.card {
+    background-color: white;
+    border-radius: 16;
+    margin: 12 16;
+    padding: 20;
+    elevation: 4;
+}
+
+.stats-card {
+    transform: translateY(-24);
+    margin-top: 0;
+}
+
+.stat-item {
+    padding: 12;
+    border-radius: 12;
+    background-color: rgba(79, 70, 229, 0.05);
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+    color: white;
+    font-size: 16;
+    font-weight: bold;
+    padding: 16 24;
+    border-radius: 12;
+    margin: 8 0;
+}
+
+.btn-secondary {
+    background-color: #F3F4F6;
+    color: #4B5563;
+    font-size: 16;
+    font-weight: bold;
+    padding: 16 24;
+    border-radius: 12;
+    margin: 8 0;
+}
+
+.counter-btn {
+    background-color: #EEF2FF;
+    color: #4F46E5;
+    width: 48;
+    height: 48;
+    border-radius: 24;
+    font-size: 24;
+    font-weight: bold;
+}
+
+.input {
+    background-color: #F9FAFB;
+    padding: 16;
+    margin: 8 0;
+    border-width: 1;
+    border-color: #E5E7EB;
+    border-radius: 12;
+    font-size: 16;
+}
+
+.stat-card {
+    background-color: #EEF2FF;
+    border-radius: 12;
+    padding: 16;
+    margin: 8;
+}
+
+.text-gradient {
+    color: linear-gradient(135deg, #4F46E5 0%, #7C3AED 100%);
+}
+
+/* Animations */
+.animate-bounce {
+    animation-name: bounce;
+    animation-duration: 0.3s;
+}
+
+.animate-scale {
+    animation-name: scale;
+    animation-duration: 0.2s;
+}
+
+.animate-press {
+    animation-name: press;
+    animation-duration: 0.1s;
+}
+
+@keyframes bounce {
+    0% { transform: translateY(0); }
+    50% { transform: translateY(-4); }
+    100% { transform: translateY(0); }
+}
+
+@keyframes scale {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+    100% { transform: scale(1); }
+}
+
+@keyframes press {
+    0% { transform: scale(1); }
+    100% { transform: scale(0.95); }
+}
+
+/* Toast Notifications */
+.toast {
+    background-color: #4F46E5;
+    color: white;
+    padding: 16;
+    border-radius: 12;
+    margin: 16;
+    opacity: 0.9;
+}

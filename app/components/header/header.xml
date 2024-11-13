@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<GridLayout xmlns="http://schemas.nativescript.org/tns.xsd" class="header" rows="auto">
+    <StackLayout>
+        <Label text="{{ title }}" class="text-3xl text-white font-bold mb-2" />
+        <Label text="{{ subtitle }}" class="text-lg text-white opacity-90" />
+    </StackLayout>
+</GridLayout>
