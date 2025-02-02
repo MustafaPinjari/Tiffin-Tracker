@@ -10,44 +10,34 @@ export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        {children}
-      </div>
-      
-      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200">
-        <div className="max-w-7xl mx-auto px-4">
-          <div className="flex justify-around">
-            <Link
-              to="/"
-              className={`flex flex-col items-center py-3 px-6 ${
-                location.pathname === '/' ? 'text-indigo-600' : 'text-gray-500'
-              }`}
-            >
-              <HomeIcon className="h-6 w-6" />
-              <span className="text-sm">Home</span>
-            </Link>
-            
-            <Link
-              to="/history"
-              className={`flex flex-col items-center py-3 px-6 ${
-                location.pathname === '/history' ? 'text-indigo-600' : 'text-gray-500'
-              }`}
-            >
-              <ClockIcon className="h-6 w-6" />
-              <span className="text-sm">History</span>
-            </Link>
+    <div className="min-h-screen bg-[#111827] text-white">
+      {/* Main Content */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
 
+      {/* Bottom Navigation Bar */}
+      <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] bg-[#1F2937]/80 border border-gray-600 shadow-xl rounded-2xl backdrop-blur-md">
+        <div className="flex justify-around py-3">
+          {[
+            { to: '/', icon: HomeIcon, label: 'Home' },
+            { to: '/history', icon: ClockIcon, label: 'History' },
+            { to: '/about', icon: UserCircleIcon, label: 'About' },
+          ].map(({ to, icon: Icon, label }) => (
             <Link
-              to="/about"
-              className={`flex flex-col items-center py-3 px-6 ${
-                location.pathname === '/about' ? 'text-indigo-600' : 'text-gray-500'
-              }`}
+              key={to}
+              to={to}
+              className={`relative flex flex-col items-center gap-1 transition-all duration-300 ${
+                location.pathname === to ? 'text-[#7C3AED]' : 'text-gray-400'
+              } group`}
             >
-              <UserCircleIcon className="h-6 w-6" />
-              <span className="text-sm">About</span>
+              <Icon className="h-7 w-7 transition-all duration-200 group-hover:scale-110 group-active:animate-bounce" />
+              <span className="text-xs">{label}</span>
+
+              {/* Active Indicator */}
+              {location.pathname === to && (
+                <span className="absolute bottom-[-6px] w-2 h-2 bg-[#7C3AED] rounded-full animate-pulse"></span>
+              )}
             </Link>
-          </div>
+          ))}
         </div>
       </nav>
     </div>

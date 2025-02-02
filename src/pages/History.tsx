@@ -1,66 +1,93 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
 import { useOrders } from '../hooks/useOrders';
-
+import { motion } from 'framer-motion';
 
 export function History() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const { getOrdersByMonth, getMonthlyStats } = useOrders();
-  
+
   const orders = getOrdersByMonth(format(selectedDate, 'yyyy-MM'));
   const stats = getMonthlyStats(format(selectedDate, 'yyyy-MM'));
 
   return (
-    <div className="py-6 space-y-6 pb-24">
+    <div className="py-8 px-4 max-w-4xl mx-auto bg-gray-900 min-h-screen text-gray-100">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Order History</h1>
+      <div className="flex items-center justify-between mb-8">
+        <h1 className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+          Order History
+        </h1>
         <input
           type="month"
           value={format(selectedDate, 'yyyy-MM')}
           onChange={(e) => setSelectedDate(new Date(e.target.value))}
-          className="rounded-lg border-gray-300"
+          className="rounded-lg bg-gray-800 text-gray-100 p-2 border border-gray-700 focus:outline-none focus:border-indigo-500"
         />
       </div>
 
       {/* Monthly Stats */}
-      <div className="bg-white rounded-lg shadow p-6">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5 }}
+        className="bg-gray-800 rounded-xl shadow-lg p-6 mb-8 backdrop-blur-sm bg-opacity-20"
+      >
         <div className="grid grid-cols-3 gap-4">
-          <div className="text-center">
-            <span className="text-2xl font-bold text-gray-900">{stats.totalOrders}</span>
-            <p className="text-sm text-gray-500">Orders</p>
-          </div>
-          <div className="text-center">
-            <span className="text-2xl font-bold text-gray-900">{stats.totalTiffins}</span>
-            <p className="text-sm text-gray-500">Tiffins</p>
-          </div>
-          <div className="text-center">
-            <span className="text-2xl font-bold text-indigo-600">₹{stats.totalAmount}</span>
-            <p className="text-sm text-gray-500">Revenue</p>
-          </div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center p-4 bg-gray-700 rounded-lg"
+          >
+            <span className="text-3xl font-bold text-gray-100">{stats.totalOrders}</span>
+            <p className="text-sm text-gray-400">Orders</p>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center p-4 bg-gray-700 rounded-lg"
+          >
+            <span className="text-3xl font-bold text-gray-100">{stats.totalTiffins}</span>
+            <p className="text-sm text-gray-400">Tiffins</p>
+          </motion.div>
+          <motion.div 
+            whileHover={{ scale: 1.05 }}
+            className="text-center p-4 bg-gray-700 rounded-lg"
+          >
+            <span className="text-3xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
+              ₹{stats.totalAmount}
+            </span>
+            <p className="text-sm text-gray-400">Revenue</p>
+          </motion.div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Orders List */}
-      <div className="space-y-4">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, delay: 0.2 }}
+        className="space-y-4"
+      >
         {orders.map((order, index) => (
-          <div key={index} className="bg-white rounded-lg shadow p-4">
+          <motion.div
+            key={index}
+            whileHover={{ scale: 1.02 }}
+            className="bg-gray-800 rounded-xl shadow-lg p-4 hover:bg-gray-700 transition-colors backdrop-blur-sm bg-opacity-20"
+          >
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-medium text-gray-900">
+                <p className="font-medium text-gray-100">
                   {format(new Date(order.date), 'MMMM d, yyyy')}
                 </p>
-                <p className="text-sm text-gray-500">
+                <p className="text-sm text-gray-400">
                   {order.numberOfTiffins} Tiffins
                 </p>
               </div>
-              <span className="text-lg font-bold text-indigo-600">
+              <span className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
                 ₹{order.totalAmount}
               </span>
             </div>
-          </div>
+          </motion.div>
         ))}
-      </div>
+      </motion.div>
     </div>
   );
 }
