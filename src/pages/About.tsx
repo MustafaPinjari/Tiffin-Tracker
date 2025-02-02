@@ -26,10 +26,10 @@ export function About() {
   ];
 
   const projects = [
-    { name: "Tiffin Tracker", image: "/porfolio.png" },
-    { name: "AI Resume Builder", image: "porfolio.png" },
-    { name: "Portfolio Website", image: "porfolio.png" },
-    { name: "Finance Tracker", image: "porfolio.png" },
+    { name: "Infinte Trukoymi", image: "/InfinteTsuko.png" },
+    { name: "Gesture Flow", image: "/GestureFlow.png" },
+    { name: "Portfolio Website", image: "./porfolio.png" },
+    { name: "Retro Game", image: "./RetroGame.png" },
   ];
 
   return (
@@ -105,12 +105,12 @@ export function About() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5, delay: 0.6 }}
-        className="bg-gray-800 rounded-xl shadow-lg p-6 pb-10 backdrop-blur-sm bg-opacity-20"
+        className="bg-gray-800 rounded-xl shadow-lg p-6 pb-20 backdrop-blur-sm bg-opacity-20 "
       >
         <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
           Projects Highlight
         </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 b-10">
           {projects.map((project) => (
             <motion.div 
               key={project.name} 
