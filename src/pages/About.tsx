@@ -1,4 +1,4 @@
-import { FaInstagram, FaLinkedin, FaCodepen, FaStackOverflow, FaAws, FaPython, FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaDocker, FaGit, FaDatabase } from "react-icons/fa";
+import { FaInstagram, FaLinkedin, FaCodepen, FaStackOverflow, FaAws, FaPython, FaHtml5, FaCss3Alt, FaJs, FaReact, FaNodeJs, FaDocker, FaGit } from "react-icons/fa";
 import { SiMongodb, SiMysql, SiTypescript } from "react-icons/si";
 import { motion } from "framer-motion";
 
@@ -26,10 +26,10 @@ export function About() {
   ];
 
   const projects = [
-    { name: "Tiffin Tracker", image: "https://source.unsplash.com/400x300/?food,tracking" },
-    { name: "AI Resume Builder", image: "https://source.unsplash.com/400x300/?resume,ai" },
-    { name: "Portfolio Website", image: "https://source.unsplash.com/400x300/?website,developer" },
-    { name: "Finance Tracker", image: "https://source.unsplash.com/400x300/?money,finance" },
+    { name: "Tiffin Tracker", image: "/porfolio.png" },
+    { name: "AI Resume Builder", image: "porfolio.png" },
+    { name: "Portfolio Website", image: "porfolio.png" },
+    { name: "Finance Tracker", image: "porfolio.png" },
   ];
 
   return (
