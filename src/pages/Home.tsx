@@ -7,7 +7,7 @@ import { motion } from 'framer-motion';
 export function Home() {
   const [tiffins, setTiffins] = useState(1);
   const { addOrder, getTodayStats } = useOrders();
-  const pricePerTiffin = 70;
+  const pricePerTiffin = 40;
   const todayStats = getTodayStats();
 
   const handleSubmit = () => {
