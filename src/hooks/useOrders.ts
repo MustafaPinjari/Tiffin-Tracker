@@ -47,10 +47,15 @@ export function useOrders() {
     };
   };
 
+  const getAllOrders = () => {
+    return orders;
+  };
+
   return {
     orders,
     addOrder,
     getOrdersByMonth,
+    getAllOrders,
     getTodayStats,
     getMonthlyStats
   };

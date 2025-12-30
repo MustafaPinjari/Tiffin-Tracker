@@ -4,127 +4,155 @@ import { motion } from "framer-motion";
 
 export function About() {
   const socialLinks = [
-    { name: 'Instagram', url: 'https://instagram.com/its_ur_musuuu', color: 'from-pink-500 to-pink-600', icon: <FaInstagram size={24} /> },
-    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/mustafa-pinjari-287625256/', color: 'from-blue-600 to-blue-700', icon: <FaLinkedin size={24} /> },
-    { name: 'Stack Overflow', url: 'https://stackoverflow.com/users/26745237/mustafapinjari', color: 'from-orange-500 to-orange-600', icon: <FaStackOverflow size={24} /> },
-    { name: 'CodePen', url: 'https://codepen.io/-MUSTAFA-', color: 'from-gray-900 to-black', icon: <FaCodepen size={24} /> },
+    { name: 'Instagram', url: 'https://instagram.com/its_ur_musuuu', color: 'bg-pink-600 hover:bg-pink-700', icon: <FaInstagram size={20} /> },
+    { name: 'LinkedIn', url: 'https://www.linkedin.com/in/mustafa-pinjari-287625256/', color: 'bg-blue-600 hover:bg-blue-700', icon: <FaLinkedin size={20} /> },
+    { name: 'Stack Overflow', url: 'https://stackoverflow.com/users/26745237/mustafapinjari', color: 'bg-orange-600 hover:bg-orange-700', icon: <FaStackOverflow size={20} /> },
+    { name: 'CodePen', url: 'https://codepen.io/-MUSTAFA-', color: 'bg-gray-700 hover:bg-gray-600', icon: <FaCodepen size={20} /> },
   ];
 
   const techStack = [
-    { name: "JavaScript", icon: <FaJs size={28} className="text-yellow-500" /> },
-    { name: "React", icon: <FaReact size={28} className="text-blue-500" /> },
-    { name: "TypeScript", icon: <SiTypescript size={28} className="text-blue-400" /> },
-    { name: "HTML5", icon: <FaHtml5 size={28} className="text-red-500" /> },
-    { name: "CSS3", icon: <FaCss3Alt size={28} className="text-blue-500" /> },
-    { name: "Python", icon: <FaPython size={28} className="text-yellow-400" /> },
-    { name: "Node.js", icon: <FaNodeJs size={28} className="text-green-500" /> },
-    { name: "MongoDB", icon: <SiMongodb size={28} className="text-green-400" /> },
-    { name: "MySQL", icon: <SiMysql size={28} className="text-blue-600" /> },
-    { name: "Git", icon: <FaGit size={28} className="text-orange-500" /> },
-    { name: "Docker", icon: <FaDocker size={28} className="text-blue-400" /> },
-    { name: "AWS", icon: <FaAws size={28} className="text-yellow-600" /> },
-  ];
-
-  const projects = [
-    { name: "Infinte Trukoymi", image: "/InfinteTsuko.png" },
-    { name: "Gesture Flow", image: "/GestureFlow.png" },
-    { name: "Portfolio Website", image: "./porfolio.png" },
-    { name: "Retro Game", image: "./RetroGame.png" },
+    { name: "JavaScript", icon: <FaJs size={24} className="text-yellow-500" /> },
+    { name: "React", icon: <FaReact size={24} className="text-blue-500" /> },
+    { name: "TypeScript", icon: <SiTypescript size={24} className="text-blue-400" /> },
+    { name: "HTML5", icon: <FaHtml5 size={24} className="text-red-500" /> },
+    { name: "CSS3", icon: <FaCss3Alt size={24} className="text-blue-500" /> },
+    { name: "Python", icon: <FaPython size={24} className="text-yellow-400" /> },
+    { name: "Node.js", icon: <FaNodeJs size={24} className="text-green-500" /> },
+    { name: "MongoDB", icon: <SiMongodb size={24} className="text-green-400" /> },
+    { name: "MySQL", icon: <SiMysql size={24} className="text-blue-600" /> },
+    { name: "Git", icon: <FaGit size={24} className="text-orange-500" /> },
+    { name: "Docker", icon: <FaDocker size={24} className="text-blue-400" /> },
+    { name: "AWS", icon: <FaAws size={24} className="text-yellow-600" /> },
   ];
 
   return (
-    <div className="py-10 px-6 max-w-5xl mx-auto bg-gray-900 min-h-screen text-gray-100">
-      {/* About Developer Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="bg-gradient-to-r from-indigo-700 to-purple-700 rounded-xl p-8 mb-10 shadow-lg hover:shadow-2xl transition-shadow backdrop-blur-sm bg-opacity-20"
-      >
-        <h1 className="text-4xl font-bold mb-6">About Developer</h1>
-        <p className="text-lg leading-relaxed text-gray-200">
-          Hey! I'm Mustafa Pinjari, a Frontend Developer with 4+ years of experience, passionate about creating responsive,
-          intuitive, and scalable web applications. My mission is to craft seamless user experiences while keeping
-          performance and innovation at the core.
-        </p>
-      </motion.div>
-
-      {/* Connect with Me Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.2 }}
-        className="bg-gray-800 rounded-xl shadow-lg p-6 mb-10 backdrop-blur-sm bg-opacity-20"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-          Connect with Me
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          {socialLinks.map((link) => (
-            <motion.a
-              key={link.name}
-              href={link.url}
-              target="_blank"
-              rel="noopener noreferrer"
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className={`flex items-center justify-center gap-3 bg-gradient-to-r ${link.color} text-white p-4 rounded-lg hover:shadow-lg transition-all font-medium`}
-            >
-              {link.icon} {link.name}
-            </motion.a>
-          ))}
+    <div className="min-h-screen bg-black">
+      {/* Status Bar */}
+      <div className="h-11 bg-black flex items-center justify-center">
+        <div className="text-white text-sm font-medium">
+          {new Date().toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: false })}
         </div>
-      </motion.div>
+      </div>
 
-      {/* Tech Stack Section */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.4 }}
-        className="bg-gray-800 rounded-xl shadow-lg p-6 mb-10 backdrop-blur-sm bg-opacity-20"
-      >
-        <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-          Tech Stack
-        </h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {techStack.map((tech) => (
-            <motion.div 
-              key={tech.name} 
-              whileHover={{ scale: 1.1 }}
-              className="flex flex-col items-center bg-gray-700 p-4 rounded-lg hover:bg-gray-600 transition-colors"
-            >
-              {tech.icon}
-              <span className="mt-2 text-gray-100">{tech.name}</span>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+      <div className="px-4 pb-28">
+        {/* Header */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="pt-4 pb-6"
+        >
+          <h1 className="text-2xl font-bold text-white mb-1">
+            Profile
+          </h1>
+          <p className="text-gray-400">
+            About the developer
+          </p>
+        </motion.div>
 
-      {/* Projects Highlight - Bento Grid Layout */}
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5, delay: 0.6 }}
-        className="bg-gray-800 rounded-xl shadow-lg p-6 pb-20 backdrop-blur-sm bg-opacity-20 "
-      >
-        <h2 className="text-3xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-purple-500">
-          Projects Highlight
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 gap-6 b-10">
-          {projects.map((project) => (
-            <motion.div 
-              key={project.name} 
-              whileHover={{ scale: 1.05 }}
-              className="relative group overflow-hidden rounded-lg shadow-lg"
-            >
-              <img src={project.image} alt={project.name} className="w-full h-48 object-cover transition-transform duration-300 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-black/50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                <h3 className="text-xl font-semibold text-white">{project.name}</h3>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
+        {/* Profile Card */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="bg-gray-900 rounded-3xl p-6 mb-6 border border-gray-800"
+        >
+          <div className="text-center mb-6">
+            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full mx-auto mb-4 flex items-center justify-center">
+              <span className="text-white text-2xl font-bold">MP</span>
+            </div>
+            <h2 className="text-xl font-bold text-white mb-2">
+              Mustafa Pinjari
+            </h2>
+            <p className="text-gray-400 text-sm">
+              Frontend Developer & UI/UX Enthusiast
+            </p>
+          </div>
+          
+          <p className="text-gray-300 text-sm leading-relaxed text-center">
+            Passionate about creating beautiful, intuitive apps that make everyday tasks easier. 
+            This tiffin tracker was built with care to help you manage your daily meals effortlessly.
+          </p>
+        </motion.div>
+
+        {/* Connect Section */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.2 }}
+          className="bg-gray-900 rounded-3xl p-6 mb-6 border border-gray-800"
+        >
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Connect with Me
+          </h3>
+          <div className="grid grid-cols-2 gap-3">
+            {socialLinks.map((link) => (
+              <motion.a
+                key={link.name}
+                href={link.url}
+                target="_blank"
+                rel="noopener noreferrer"
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                className={`flex items-center gap-3 ${link.color} text-white p-3 rounded-2xl transition-all font-medium text-sm`}
+              >
+                {link.icon}
+                <span>{link.name}</span>
+              </motion.a>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* Tech Stack */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.3 }}
+          className="bg-gray-900 rounded-3xl p-6 mb-6 border border-gray-800"
+        >
+          <h3 className="text-lg font-semibold text-white mb-4">
+            Built With
+          </h3>
+          <div className="grid grid-cols-4 gap-3">
+            {techStack.slice(0, 8).map((tech) => (
+              <motion.div 
+                key={tech.name} 
+                whileHover={{ scale: 1.05 }}
+                className="flex flex-col items-center bg-gray-800/50 p-3 rounded-2xl"
+              >
+                {tech.icon}
+                <span className="mt-2 text-gray-300 text-xs text-center">{tech.name}</span>
+              </motion.div>
+            ))}
+          </div>
+        </motion.div>
+
+        {/* App Info */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6, delay: 0.4 }}
+          className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
+        >
+          <h3 className="text-lg font-semibold text-white mb-4">
+            About This App
+          </h3>
+          <div className="space-y-3 text-sm text-gray-300">
+            <p>
+              <span className="text-white font-medium">Version:</span> 1.0.0
+            </p>
+            <p>
+              <span className="text-white font-medium">Purpose:</span> Track your daily tiffin orders with ease
+            </p>
+            <p>
+              <span className="text-white font-medium">Features:</span> Order tracking, history, analytics
+            </p>
+            <p className="text-xs text-gray-500 pt-2">
+              Made with ❤️ for better meal management
+            </p>
+          </div>
+        </motion.div>
+      </div>
     </div>
   );
 }

@@ -1,6 +1,7 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { HomeIcon, ClockIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { FloatingActionButton } from './FloatingActionButton';
 
 interface LayoutProps {
   children: ReactNode;
@@ -10,34 +11,42 @@ export function Layout({ children }: LayoutProps) {
   const location = useLocation();
 
   return (
-    <div className="min-h-screen bg-[#111827] text-white">
+    <div className="min-h-screen bg-black text-white">
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">{children}</div>
+      <div className="pb-20">{children}</div>
 
-      {/* Bottom Navigation Bar */}
-      <nav className="fixed bottom-4 left-1/2 transform -translate-x-1/2 w-[90%] bg-[#1F2937]/80 border border-gray-600 shadow-xl rounded-2xl backdrop-blur-md">
-        <div className="flex justify-around py-3">
-          {[
-            { to: '/', icon: HomeIcon, label: 'Home' },
-            { to: '/history', icon: ClockIcon, label: 'History' },
-            { to: '/about', icon: UserCircleIcon, label: 'About' },
-          ].map(({ to, icon: Icon, label }) => (
-            <Link
-              key={to}
-              to={to}
-              className={`relative flex flex-col items-center gap-1 transition-all duration-300 ${
-                location.pathname === to ? 'text-[#7C3AED]' : 'text-gray-400'
-              } group`}
-            >
-              <Icon className="h-7 w-7 transition-all duration-200 group-hover:scale-110 group-active:animate-bounce" />
-              <span className="text-xs">{label}</span>
+      {/* Floating Action Button */}
+      <FloatingActionButton />
 
-              {/* Active Indicator */}
-              {location.pathname === to && (
-                <span className="absolute bottom-[-6px] w-2 h-2 bg-[#7C3AED] rounded-full animate-pulse"></span>
-              )}
-            </Link>
-          ))}
+      {/* iOS-style Tab Bar */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-gray-900/95 backdrop-blur-2xl border-t border-gray-800/50">
+        <div className="safe-area-inset-bottom">
+          <div className="flex justify-around py-2">
+            {[
+              { to: '/', icon: HomeIcon, label: 'Home' },
+              { to: '/history', icon: ClockIcon, label: 'History' },
+              { to: '/about', icon: UserCircleIcon, label: 'Profile' },
+            ].map(({ to, icon: Icon, label }) => (
+              <Link
+                key={to}
+                to={to}
+                className={`flex flex-col items-center gap-1 py-2 px-6 transition-all duration-200 ${
+                  location.pathname === to 
+                    ? 'text-blue-500' 
+                    : 'text-gray-500'
+                }`}
+              >
+                <Icon className={`h-6 w-6 transition-all duration-200 ${
+                  location.pathname === to ? 'scale-110' : 'scale-100'
+                }`} />
+                <span className={`text-xs font-medium ${
+                  location.pathname === to ? 'text-blue-500' : 'text-gray-500'
+                }`}>
+                  {label}
+                </span>
+              </Link>
+            ))}
+          </div>
         </div>
       </nav>
     </div>
