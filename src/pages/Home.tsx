@@ -76,7 +76,10 @@ export function Home() {
           className="pt-4 pb-6"
         >
           <h1 className="text-2xl font-bold text-white mb-1">
-            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 17 ? 'Afternoon' : 'Evening'}
+            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 17 ? 'Afternoon' : 'Evening'} Bubuuuuu
+          </h1>
+           <h1 className="text-2xl font-bold text-white mb-1">
+            I love you bubuuuuuu 😘🫂           
           </h1>
           <p className="text-gray-400 text-base">
             {format(new Date(), 'EEEE, MMMM d')}
