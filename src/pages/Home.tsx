@@ -7,6 +7,8 @@ import { Toast } from '../components/Toast';
 import { UnifiedOrderManager } from '../components/UnifiedOrderManager';
 import { ManageTiffin } from '../components/ManageTiffin';
 import { notificationService } from '../services/notificationService';
+import { Card, Button, Heading1, BodyText } from '../components/ui';
+import { animations } from '../utils/animations';
 
 export function Home() {
   const [showToast, setShowToast] = useState(false);
@@ -65,28 +67,25 @@ export function Home() {
       <div className="px-4 pb-28">
         {/* Header with Manage Tiffin Button */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          {...animations.fadeInUp}
           className="flex items-center justify-between mb-6"
         >
           <div>
-            <h1 className="text-2xl font-bold text-white mb-1">
+            <Heading1 className="mb-1">
               Tiffin Tracker
-            </h1>
-            <p className="text-gray-400 text-base">
+            </Heading1>
+            <BodyText>
               {format(new Date(), 'EEEE, MMMM d')}
-            </p>
+            </BodyText>
           </div>
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+          <Button
+            variant="secondary"
+            size="md"
+            leftIcon={<Cog6ToothIcon className="w-4 h-4" />}
             onClick={() => setShowManageTiffin(true)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-full border border-gray-700 hover:bg-gray-700 transition-colors"
           >
-            <Cog6ToothIcon className="h-5 w-5 text-gray-400" />
-            <span className="text-gray-300 text-sm font-medium">Manage</span>
-          </motion.button>
+            Manage
+          </Button>
         </motion.div>
 
         {/* Unified Order Manager */}
@@ -94,75 +93,82 @@ export function Home() {
 
         {/* Quick Stats */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.4 }}
+          {...animations.fadeInUp}
+          transition={{ ...animations.fadeInUp.transition, delay: 0.1 }}
           className="grid grid-cols-3 gap-3 mb-6"
         >
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-white mb-1">{todayStats.orders}</div>
-            <div className="text-gray-400 text-xs">Today's Orders</div>
-          </div>
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-white mb-1">{todayStats.tiffins}</div>
-            <div className="text-gray-400 text-xs">Tiffins</div>
-          </div>
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-blue-400 mb-1">₹{todayStats.amount}</div>
-            <div className="text-gray-400 text-xs">Spent</div>
-          </div>
+          <Card padding="md" hover>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white mb-1">{todayStats.orders}</div>
+              <div className="text-gray-400 text-xs">Today's Orders</div>
+            </div>
+          </Card>
+          <Card padding="md" hover>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-white mb-1">{todayStats.tiffins}</div>
+              <div className="text-gray-400 text-xs">Tiffins</div>
+            </div>
+          </Card>
+          <Card padding="md" hover>
+            <div className="text-center">
+              <div className="text-2xl font-bold text-blue-400 mb-1">₹{todayStats.amount}</div>
+              <div className="text-gray-400 text-xs">Spent</div>
+            </div>
+          </Card>
         </motion.div>
 
         {/* Weekly & Monthly Overview */}
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.5 }}
+          {...animations.staggerContainer}
           className="space-y-4"
         >
           {/* This Week */}
-          <div className="bg-gray-900 rounded-2xl p-5 border border-gray-800">
-            <div className="flex items-center gap-2 mb-4">
-              <ClockIcon className="h-5 w-5 text-blue-400" />
-              <h3 className="font-semibold text-white">This Week</h3>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{weeklyStats.orders}</div>
-                <div className="text-gray-400 text-xs">Orders</div>
+          <motion.div {...animations.staggerItem}>
+            <Card padding="lg">
+              <div className="flex items-center gap-2 mb-4">
+                <ClockIcon className="h-5 w-5 text-blue-400" />
+                <h3 className="font-semibold text-white">This Week</h3>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{weeklyStats.tiffins}</div>
-                <div className="text-gray-400 text-xs">Tiffins</div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{weeklyStats.orders}</div>
+                  <div className="text-gray-400 text-xs">Orders</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{weeklyStats.tiffins}</div>
+                  <div className="text-gray-400 text-xs">Tiffins</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-blue-400">₹{weeklyStats.amount}</div>
+                  <div className="text-gray-400 text-xs">Spent</div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-blue-400">₹{weeklyStats.amount}</div>
-                <div className="text-gray-400 text-xs">Spent</div>
-              </div>
-            </div>
-          </div>
+            </Card>
+          </motion.div>
 
           {/* This Month */}
-          <div className="bg-gray-900 rounded-2xl p-5 border border-gray-800">
-            <div className="flex items-center gap-2 mb-4">
-              <ChartBarIcon className="h-5 w-5 text-green-400" />
-              <h3 className="font-semibold text-white">This Month</h3>
-            </div>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{monthlyStats.totalOrders}</div>
-                <div className="text-gray-400 text-xs">Orders</div>
+          <motion.div {...animations.staggerItem}>
+            <Card padding="lg">
+              <div className="flex items-center gap-2 mb-4">
+                <ChartBarIcon className="h-5 w-5 text-green-400" />
+                <h3 className="font-semibold text-white">This Month</h3>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-white">{monthlyStats.totalTiffins}</div>
-                <div className="text-gray-400 text-xs">Tiffins</div>
+              <div className="grid grid-cols-3 gap-4">
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{monthlyStats.totalOrders}</div>
+                  <div className="text-gray-400 text-xs">Orders</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-white">{monthlyStats.totalTiffins}</div>
+                  <div className="text-gray-400 text-xs">Tiffins</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-xl font-bold text-green-400">₹{monthlyStats.totalAmount}</div>
+                  <div className="text-gray-400 text-xs">Spent</div>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="text-xl font-bold text-green-400">₹{monthlyStats.totalAmount}</div>
-                <div className="text-gray-400 text-xs">Spent</div>
-              </div>
-            </div>
-          </div>
+            </Card>
+          </motion.div>
         </motion.div>
 
         {/* Manage Tiffin Modal */}

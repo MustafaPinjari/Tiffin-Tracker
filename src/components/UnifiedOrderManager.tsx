@@ -16,6 +16,8 @@ import { useOrders } from '../context/OrderContext';
 import { notificationService, TiffinStatus } from '../services/notificationService';
 import { EnhancedCalendar } from './EnhancedCalendar';
 import { NotificationSettings } from './NotificationSettings';
+import { Card, Button, Heading1, Heading2, BodyText } from './ui';
+import { animations } from '../utils/animations';
 
 interface UnifiedOrderManagerProps {
   onOrderPlaced: (message: string) => void;
@@ -138,112 +140,103 @@ export function UnifiedOrderManager({ onOrderPlaced }: UnifiedOrderManagerProps)
     <div className="space-y-6">
       {/* Header with Notification Settings */}
       <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
+        {...animations.fadeInUp}
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-2xl font-bold text-white mb-1">
+          <Heading1 className="mb-1">
             I love you bubuuu😘🫀🫂
-          </h1>
-          <p className="text-gray-400 text-base">
+          </Heading1>
+          <BodyText>
             {format(new Date(), 'EEEE, MMMM d')}
-          </p>
+          </BodyText>
         </div>
-        <motion.button
-          whileHover={{ scale: 1.05 }}
-          whileTap={{ scale: 0.95 }}
+        <Button
+          variant="ghost"
+          size="md"
           onClick={() => setShowNotificationSettings(true)}
-          className="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center border border-gray-700"
+          className="w-10 h-10 p-0"
         >
-          <BellIcon className="h-5 w-5 text-gray-400" />
-        </motion.button>
+          <BellIcon className="h-5 w-5" />
+        </Button>
       </motion.div>
 
       {/* Today's Quick Status (only show if today) */}
       {isSelectedToday && todayStatus.status === 'pending' && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6, delay: 0.1 }}
-          className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
-        >
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-semibold text-white">Quick Status Update</h3>
-            <span className="text-gray-400 text-sm">Today</span>
-          </div>
-          <div className="flex gap-3">
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleStatusUpdate('ordered')}
-              className="flex-1 bg-green-600 hover:bg-green-700 text-white py-3 rounded-2xl font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              <CheckCircleIcon className="h-5 w-5" />
-              Order {tiffins} Tiffin{tiffins > 1 ? 's' : ''}
-            </motion.button>
-            <motion.button
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              onClick={() => handleStatusUpdate('skipped')}
-              className="flex-1 bg-red-600 hover:bg-red-700 text-white py-3 rounded-2xl font-medium transition-colors flex items-center justify-center gap-2"
-            >
-              <XCircleIcon className="h-5 w-5" />
-              Skip Today
-            </motion.button>
-          </div>
+        <motion.div {...animations.fadeInUp} transition={{ ...animations.fadeInUp.transition, delay: 0.1 }}>
+          <Card padding="lg">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-lg font-semibold text-white">Quick Status Update</h3>
+              <span className="text-gray-400 text-sm">Today</span>
+            </div>
+            <div className="flex gap-3">
+              <Button
+                variant="primary"
+                size="md"
+                fullWidth
+                leftIcon={<CheckCircleIcon className="h-5 w-5" />}
+                onClick={() => handleStatusUpdate('ordered')}
+                className="bg-green-600 hover:bg-green-700"
+              >
+                Order {tiffins} Tiffin{tiffins > 1 ? 's' : ''}
+              </Button>
+              <Button
+                variant="danger"
+                size="md"
+                fullWidth
+                leftIcon={<XCircleIcon className="h-5 w-5" />}
+                onClick={() => handleStatusUpdate('skipped')}
+              >
+                Skip Today
+              </Button>
+            </div>
+          </Card>
         </motion.div>
       )}
 
       {/* Main Order Interface */}
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
-        className="bg-gray-900 rounded-3xl p-6 border border-gray-800"
-      >
-        {/* Date Selection Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div className="flex items-center gap-3">
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleDateNavigation('prev')}
-              className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors"
-            >
-              <ChevronLeftIcon className="h-4 w-4 text-gray-400" />
-            </motion.button>
-            
-            <div className="text-center">
-              <h2 className="text-lg font-semibold text-white">
-                {isSelectedToday ? "Today's Order" : format(selectedDateObj, 'MMM d, yyyy')}
-              </h2>
-              <p className="text-gray-400 text-sm">
-                {format(selectedDateObj, 'EEEE')}
-              </p>
+      <motion.div {...animations.fadeInUp} transition={{ ...animations.fadeInUp.transition, delay: 0.2 }}>
+        <Card padding="lg">
+          {/* Date Selection Header */}
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-3">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDateNavigation('prev')}
+                className="w-8 h-8 p-0"
+              >
+                <ChevronLeftIcon className="h-4 w-4" />
+              </Button>
+              
+              <div className="text-center">
+                <Heading2>
+                  {isSelectedToday ? "Today's Order" : format(selectedDateObj, 'MMM d, yyyy')}
+                </Heading2>
+                <BodyText className="text-sm">
+                  {format(selectedDateObj, 'EEEE')}
+                </BodyText>
+              </div>
+
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={() => handleDateNavigation('next')}
+                className="w-8 h-8 p-0"
+              >
+                <ChevronRightIcon className="h-4 w-4" />
+              </Button>
             </div>
 
-            <motion.button
-              whileHover={{ scale: 1.1 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={() => handleDateNavigation('next')}
-              className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center hover:bg-gray-700 transition-colors"
+            <Button
+              variant="secondary"
+              size="sm"
+              leftIcon={<CalendarIcon className="h-4 w-4" />}
+              onClick={() => setShowCalendar(!showCalendar)}
             >
-              <ChevronRightIcon className="h-4 w-4 text-gray-400" />
-            </motion.button>
+              Calendar
+            </Button>
           </div>
-
-          <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            onClick={() => setShowCalendar(!showCalendar)}
-            className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-full hover:bg-gray-700 transition-colors"
-          >
-            <CalendarIcon className="h-4 w-4 text-gray-400" />
-            <span className="text-gray-300 text-sm font-medium">Calendar</span>
-          </motion.button>
-        </div>
 
         {/* Existing Order Status */}
         {existingOrder && (
@@ -320,15 +313,16 @@ export function UnifiedOrderManager({ onOrderPlaced }: UnifiedOrderManagerProps)
         </div>
 
         {/* Order Button */}
-        <motion.button
-          whileHover={{ scale: 1.02 }}
-          whileTap={{ scale: 0.98 }}
+        <Button
+          variant="primary"
+          size="lg"
+          fullWidth
           onClick={handleOrderSubmit}
-          className="w-full bg-blue-600 hover:bg-blue-700 text-white py-4 rounded-2xl font-semibold text-lg transition-colors"
         >
           {existingOrder ? 'Update Order' : (isSelectedToday ? 'Confirm Order' : 'Add Order')}
-        </motion.button>
-      </motion.div>
+        </Button>
+      </Card>
+    </motion.div>
 
       {/* Enhanced Calendar */}
       <AnimatePresence>
