@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { format, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
-import { useOrders } from '../hooks/useOrders';
+import { useOrders } from '../context/OrderContext';
 import { motion } from 'framer-motion';
 import { CalendarIcon, FunnelIcon } from '@heroicons/react/24/outline';
 

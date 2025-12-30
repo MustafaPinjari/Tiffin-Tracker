@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { HomeIcon, ClockIcon, UserCircleIcon } from '@heroicons/react/24/outline';
+import { HomeIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { FloatingActionButton } from './FloatingActionButton';
 
 interface LayoutProps {
@@ -25,7 +25,6 @@ export function Layout({ children }: LayoutProps) {
             {[
               { to: '/', icon: HomeIcon, label: 'Home' },
               { to: '/history', icon: ClockIcon, label: 'History' },
-              { to: '/about', icon: UserCircleIcon, label: 'Profile' },
             ].map(({ to, icon: Icon, label }) => (
               <Link
                 key={to}

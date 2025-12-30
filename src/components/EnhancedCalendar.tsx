@@ -3,7 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { format, startOfMonth, endOfMonth, eachDayOfInterval, isSameMonth, isToday, addMonths, subMonths, startOfWeek, endOfWeek } from 'date-fns';
 import { ChevronLeftIcon, ChevronRightIcon, PlusIcon, CheckCircleIcon, XCircleIcon, ClockIcon } from '@heroicons/react/24/outline';
 import { notificationService, TiffinStatus } from '../services/notificationService';
-import { useOrders } from '../hooks/useOrders';
+import { useOrders } from '../context/OrderContext';
 
 interface EnhancedCalendarProps {
   onDateSelect: (date: string) => void;

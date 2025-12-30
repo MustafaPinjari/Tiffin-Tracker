@@ -12,7 +12,7 @@ import {
   ChevronRightIcon,
   BellIcon
 } from '@heroicons/react/24/outline';
-import { useOrders } from '../hooks/useOrders';
+import { useOrders } from '../context/OrderContext';
 import { notificationService, TiffinStatus } from '../services/notificationService';
 import { EnhancedCalendar } from './EnhancedCalendar';
 import { NotificationSettings } from './NotificationSettings';
@@ -145,7 +145,7 @@ export function UnifiedOrderManager({ onOrderPlaced }: UnifiedOrderManagerProps)
       >
         <div>
           <h1 className="text-2xl font-bold text-white mb-1">
-            Good {new Date().getHours() < 12 ? 'Morning' : new Date().getHours() < 17 ? 'Afternoon' : 'Evening'}
+            I love you bubuuu😘🫀🫂
           </h1>
           <p className="text-gray-400 text-base">
             {format(new Date(), 'EEEE, MMMM d')}

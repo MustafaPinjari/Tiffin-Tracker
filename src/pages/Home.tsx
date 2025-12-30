@@ -1,15 +1,17 @@
 import { useState, useEffect } from 'react';
 import { format, startOfWeek, endOfWeek } from 'date-fns';
-import { ChartBarIcon, ClockIcon } from '@heroicons/react/24/outline';
-import { useOrders } from '../hooks/useOrders';
+import { ChartBarIcon, ClockIcon, Cog6ToothIcon } from '@heroicons/react/24/outline';
+import { useOrders } from '../context/OrderContext';
 import { motion } from 'framer-motion';
 import { Toast } from '../components/Toast';
 import { UnifiedOrderManager } from '../components/UnifiedOrderManager';
+import { ManageTiffin } from '../components/ManageTiffin';
 import { notificationService } from '../services/notificationService';
 
 export function Home() {
   const [showToast, setShowToast] = useState(false);
   const [toastMessage, setToastMessage] = useState('');
+  const [showManageTiffin, setShowManageTiffin] = useState(false);
   const { getTodayStats, getMonthlyStats, getAllOrders } = useOrders();
   const todayStats = getTodayStats();
   const monthlyStats = getMonthlyStats(format(new Date(), 'yyyy-MM'));
@@ -38,6 +40,11 @@ export function Home() {
     setShowToast(true);
   };
 
+  const handleOrderDeleted = (message: string) => {
+    setToastMessage(message);
+    setShowToast(true);
+  };
+
   return (
     <div className="min-h-screen bg-black">
       {/* Toast Notification */}
@@ -56,6 +63,32 @@ export function Home() {
       </div>
 
       <div className="px-4 pb-28">
+        {/* Header with Manage Tiffin Button */}
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="flex items-center justify-between mb-6"
+        >
+          <div>
+            <h1 className="text-2xl font-bold text-white mb-1">
+              Tiffin Tracker
+            </h1>
+            <p className="text-gray-400 text-base">
+              {format(new Date(), 'EEEE, MMMM d')}
+            </p>
+          </div>
+          <motion.button
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            onClick={() => setShowManageTiffin(true)}
+            className="flex items-center gap-2 px-4 py-2 bg-gray-800 rounded-full border border-gray-700 hover:bg-gray-700 transition-colors"
+          >
+            <Cog6ToothIcon className="h-5 w-5 text-gray-400" />
+            <span className="text-gray-300 text-sm font-medium">Manage</span>
+          </motion.button>
+        </motion.div>
+
         {/* Unified Order Manager */}
         <UnifiedOrderManager onOrderPlaced={handleOrderPlaced} />
 
@@ -131,6 +164,13 @@ export function Home() {
             </div>
           </div>
         </motion.div>
+
+        {/* Manage Tiffin Modal */}
+        <ManageTiffin 
+          isOpen={showManageTiffin}
+          onClose={() => setShowManageTiffin(false)}
+          onOrderDeleted={handleOrderDeleted}
+        />
       </div>
     </div>
   );

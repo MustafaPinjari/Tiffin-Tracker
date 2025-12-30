@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { format, startOfDay } from 'date-fns';
+import { cleanupOrdersData } from '../utils/dataCleanup';
 
 interface Order {
   id: string;
@@ -12,6 +13,9 @@ interface Order {
 interface OrderContextType {
   orders: Order[];
   addOrder: (order: Omit<Order, 'id'>) => void;
+  deleteOrder: (id: string) => void;
+  updateOrder: (id: string, updatedOrder: Omit<Order, 'id'>) => void;
+  getAllOrders: () => Order[];
   getOrdersByMonth: (month: string) => Order[];
   getTodayStats: () => { orders: number; tiffins: number; amount: number };
   getMonthlyStats: (month: string) => { totalOrders: number; totalTiffins: number; totalAmount: number };
@@ -21,20 +25,45 @@ const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(() => {
-    const saved = localStorage.getItem('orders');
-    return saved ? JSON.parse(saved) : [];
+    // Use cleanup function to ensure data consistency
+    return cleanupOrdersData();
   });
 
   useEffect(() => {
-    localStorage.setItem('orders', JSON.stringify(orders));
+    // Clean up and save orders
+    const validOrders = orders.filter(order => order.id && order.id.trim() !== '');
+    if (validOrders.length !== orders.length) {
+      // If we filtered out invalid orders, update the state
+      setOrders(validOrders);
+    }
+    localStorage.setItem('orders', JSON.stringify(validOrders));
   }, [orders]);
 
   const addOrder = (order: Omit<Order, 'id'>) => {
-    const newOrder = {
-      ...order,
-      id: crypto.randomUUID()
-    };
-    setOrders(prev => [newOrder, ...prev]);
+    // Remove existing order for the same date if it exists
+    setOrders(prev => {
+      const filtered = prev.filter(existingOrder => existingOrder.date !== order.date);
+      const newOrder = {
+        ...order,
+        id: crypto.randomUUID()
+      };
+      return [newOrder, ...filtered];
+    });
+  };
+
+  const deleteOrder = (id: string) => {
+    setOrders(prev => prev.filter(order => order.id !== id));
+  };
+
+  const updateOrder = (id: string, updatedOrder: Omit<Order, 'id'>) => {
+    setOrders(prev => prev.map(order => 
+      order.id === id ? { ...updatedOrder, id } : order
+    ));
+  };
+
+  const getAllOrders = () => {
+    // Filter out any orders with invalid IDs
+    return orders.filter(order => order.id && order.id.trim() !== '');
   };
 
   const getOrdersByMonth = (month: string) => {
@@ -63,7 +92,16 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   };
 
   return (
-    <OrderContext.Provider value={{ orders, addOrder, getOrdersByMonth, getTodayStats, getMonthlyStats }}>
+    <OrderContext.Provider value={{ 
+      orders, 
+      addOrder, 
+      deleteOrder, 
+      updateOrder, 
+      getAllOrders, 
+      getOrdersByMonth, 
+      getTodayStats, 
+      getMonthlyStats 
+    }}>
       {children}
     </OrderContext.Provider>
   );
