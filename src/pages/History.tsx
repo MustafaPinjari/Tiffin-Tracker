@@ -3,11 +3,22 @@ import { format, startOfWeek, endOfWeek, isWithinInterval } from 'date-fns';
 import { useOrders } from '../context/OrderContext';
 import { motion } from 'framer-motion';
 import { CalendarIcon, FunnelIcon } from '@heroicons/react/24/outline';
+import { MobileDataFix } from '../components/MobileDataFix';
 
 export function History() {
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [viewMode, setViewMode] = useState<'month' | 'week' | 'all'>('month');
-  const { getOrdersByMonth, getMonthlyStats, getAllOrders } = useOrders();
+  const { getOrdersByMonth, getMonthlyStats, getAllOrders, getTotalStats } = useOrders();
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const handleDataFixed = () => {
+    // Force re-render to show updated data
+    setRefreshKey(prev => prev + 1);
+    // Also refresh the page to reload context
+    setTimeout(() => {
+      window.location.reload();
+    }, 1000);
+  };
 
   const getFilteredOrders = () => {
     switch (viewMode) {
@@ -26,8 +37,30 @@ export function History() {
     }
   };
 
+  const getFilteredStats = () => {
+    switch (viewMode) {
+      case 'month':
+        return getMonthlyStats(format(selectedDate, 'yyyy-MM'));
+      case 'week':
+        const weekStart = startOfWeek(selectedDate);
+        const weekEnd = endOfWeek(selectedDate);
+        const weekOrders = getAllOrders().filter(order => 
+          isWithinInterval(new Date(order.date), { start: weekStart, end: weekEnd })
+        );
+        return {
+          totalOrders: weekOrders.length,
+          totalTiffins: weekOrders.reduce((sum, order) => sum + order.numberOfTiffins, 0),
+          totalAmount: weekOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+        };
+      case 'all':
+        return getTotalStats();
+      default:
+        return getMonthlyStats(format(selectedDate, 'yyyy-MM'));
+    }
+  };
+
   const orders = getFilteredOrders();
-  const stats = getMonthlyStats(format(selectedDate, 'yyyy-MM'));
+  const stats = getFilteredStats();
 
   return (
     <div className="min-h-screen bg-black">
@@ -67,15 +100,17 @@ export function History() {
               <span className="text-white font-medium">Filter</span>
             </div>
             
-            <div className="flex items-center gap-2 bg-gray-800 rounded-full px-3 py-1">
-              <CalendarIcon className="h-4 w-4 text-gray-400" />
-              <input
-                type="month"
-                value={format(selectedDate, 'yyyy-MM')}
-                onChange={(e) => setSelectedDate(new Date(e.target.value))}
-                className="bg-transparent text-white text-sm border-none focus:outline-none"
-              />
-            </div>
+            {viewMode !== 'all' && (
+              <div className="flex items-center gap-2 bg-gray-800 rounded-full px-3 py-1">
+                <CalendarIcon className="h-4 w-4 text-gray-400" />
+                <input
+                  type="month"
+                  value={format(selectedDate, 'yyyy-MM')}
+                  onChange={(e) => setSelectedDate(new Date(e.target.value))}
+                  className="bg-transparent text-white text-sm border-none focus:outline-none"
+                />
+              </div>
+            )}
           </div>
 
           {/* View Mode Selector */}
@@ -103,20 +138,27 @@ export function History() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="grid grid-cols-3 gap-3 mb-6"
+          className="mb-6"
         >
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-white mb-1">{stats.totalOrders}</div>
-            <div className="text-gray-400 text-xs">Orders</div>
+          <div className="grid grid-cols-3 gap-3 mb-3">
+            <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
+              <div className="text-2xl font-bold text-white mb-1">{stats.totalOrders}</div>
+              <div className="text-gray-400 text-xs">Orders</div>
+            </div>
+            <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
+              <div className="text-2xl font-bold text-white mb-1">{stats.totalTiffins}</div>
+              <div className="text-gray-400 text-xs">Tiffins</div>
+            </div>
+            <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
+              <div className="text-2xl font-bold text-blue-400 mb-1">₹{stats.totalAmount}</div>
+              <div className="text-gray-400 text-xs">Total</div>
+            </div>
           </div>
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-white mb-1">{stats.totalTiffins}</div>
-            <div className="text-gray-400 text-xs">Tiffins</div>
-          </div>
-          <div className="bg-gray-900 rounded-2xl p-4 text-center border border-gray-800">
-            <div className="text-2xl font-bold text-blue-400 mb-1">₹{stats.totalAmount}</div>
-            <div className="text-gray-400 text-xs">Total</div>
-          </div>
+          
+          {/* Show data fix tool if stats show zero in "all" mode */}
+          {viewMode === 'all' && stats.totalOrders === 0 && (
+            <MobileDataFix onDataFixed={handleDataFixed} />
+          )}
         </motion.div>
 
         {/* Orders List */}
@@ -125,6 +167,7 @@ export function History() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.3 }}
           className="space-y-3"
+          key={refreshKey}
         >
           {orders.length === 0 ? (
             <motion.div
@@ -134,11 +177,18 @@ export function History() {
             >
               <CalendarIcon className="h-12 w-12 text-gray-600 mx-auto mb-4" />
               <h3 className="text-lg font-semibold text-gray-400 mb-2">No Orders Found</h3>
-              <p className="text-gray-500 text-sm px-6">
+              <p className="text-gray-500 text-sm px-6 mb-6">
                 {viewMode === 'month' && `No orders for ${format(selectedDate, 'MMMM yyyy')}`}
                 {viewMode === 'week' && `No orders this week`}
-                {viewMode === 'all' && `Start ordering to see your history`}
+                {viewMode === 'all' && `No orders found in your history`}
               </p>
+              
+              {/* Show data fix tool if no orders found in "all" mode */}
+              {viewMode === 'all' && (
+                <div className="px-6">
+                  <MobileDataFix onDataFixed={handleDataFixed} />
+                </div>
+              )}
             </motion.div>
           ) : (
             orders.map((order, index) => (

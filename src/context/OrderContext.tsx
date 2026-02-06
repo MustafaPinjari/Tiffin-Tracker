@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { format, startOfDay } from 'date-fns';
 import { cleanupOrdersData } from '../utils/dataCleanup';
+import { migrateExistingData, needsMigration, backupExistingData } from '../utils/dataMigration';
 
 interface Order {
   id: string;
@@ -19,12 +20,20 @@ interface OrderContextType {
   getOrdersByMonth: (month: string) => Order[];
   getTodayStats: () => { orders: number; tiffins: number; amount: number };
   getMonthlyStats: (month: string) => { totalOrders: number; totalTiffins: number; totalAmount: number };
+  getTotalStats: () => { totalOrders: number; totalTiffins: number; totalAmount: number };
 }
 
 const OrderContext = createContext<OrderContextType | undefined>(undefined);
 
 export function OrderProvider({ children }: { children: ReactNode }) {
   const [orders, setOrders] = useState<Order[]>(() => {
+    // Check if migration is needed for existing users
+    if (needsMigration()) {
+      console.log('Migration needed - backing up and migrating data...');
+      backupExistingData();
+      return migrateExistingData();
+    }
+    
     // Use cleanup function to ensure data consistency
     return cleanupOrdersData();
   });
@@ -62,8 +71,17 @@ export function OrderProvider({ children }: { children: ReactNode }) {
   };
 
   const getAllOrders = () => {
-    // Filter out any orders with invalid IDs
-    return orders.filter(order => order.id && order.id.trim() !== '');
+    // Filter out any orders with invalid IDs and validate essential fields
+    return orders.filter(order => 
+      order && 
+      order.id && 
+      order.id.trim() !== '' &&
+      order.date &&
+      typeof order.numberOfTiffins === 'number' &&
+      typeof order.totalAmount === 'number' &&
+      order.numberOfTiffins > 0 &&
+      order.totalAmount >= 0
+    );
   };
 
   const getOrdersByMonth = (month: string) => {
@@ -91,6 +109,16 @@ export function OrderProvider({ children }: { children: ReactNode }) {
     };
   };
 
+  const getTotalStats = () => {
+    const allOrders = getAllOrders();
+    
+    return {
+      totalOrders: allOrders.length,
+      totalTiffins: allOrders.reduce((sum, order) => sum + order.numberOfTiffins, 0),
+      totalAmount: allOrders.reduce((sum, order) => sum + order.totalAmount, 0)
+    };
+  };
+
   return (
     <OrderContext.Provider value={{ 
       orders, 
@@ -100,7 +128,8 @@ export function OrderProvider({ children }: { children: ReactNode }) {
       getAllOrders, 
       getOrdersByMonth, 
       getTodayStats, 
-      getMonthlyStats 
+      getMonthlyStats,
+      getTotalStats
     }}>
       {children}
     </OrderContext.Provider>
