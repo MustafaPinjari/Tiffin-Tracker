@@ -1,145 +1,82 @@
-import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { format, startOfDay } from 'date-fns';
-import { cleanupOrdersData } from '../utils/dataCleanup';
-import { migrateExistingData, needsMigration, backupExistingData } from '../utils/dataMigration';
+import React from 'react';
+import { useApp } from './AppContext';
+import { Order, MealType, MealStatus } from '../types';
 
-interface Order {
+export interface LegacyOrder {
   id: string;
   date: string;
   numberOfTiffins: number;
   pricePerTiffin: number;
   totalAmount: number;
+  mealType?: MealType;
+  status?: MealStatus;
+  notes?: string;
+  vendor?: string;
+  createdAt?: string;
 }
 
-interface OrderContextType {
-  orders: Order[];
-  addOrder: (order: Omit<Order, 'id'>) => void;
-  deleteOrder: (id: string) => void;
-  updateOrder: (id: string, updatedOrder: Omit<Order, 'id'>) => void;
-  getAllOrders: () => Order[];
-  getOrdersByMonth: (month: string) => Order[];
-  getTodayStats: () => { orders: number; tiffins: number; amount: number };
-  getMonthlyStats: (month: string) => { totalOrders: number; totalTiffins: number; totalAmount: number };
-  getTotalStats: () => { totalOrders: number; totalTiffins: number; totalAmount: number };
-}
+export type LegacyOrderInput = {
+  date: string;
+  numberOfTiffins: number;
+  pricePerTiffin?: number;
+  totalAmount?: number;
+  mealType?: MealType;
+  status?: MealStatus;
+  notes?: string;
+  vendor?: string;
+};
 
-const OrderContext = createContext<OrderContextType | undefined>(undefined);
-
-export function OrderProvider({ children }: { children: ReactNode }) {
-  const [orders, setOrders] = useState<Order[]>(() => {
-    // Check if migration is needed for existing users
-    if (needsMigration()) {
-      console.log('Migration needed - backing up and migrating data...');
-      backupExistingData();
-      return migrateExistingData();
-    }
-    
-    // Use cleanup function to ensure data consistency
-    return cleanupOrdersData();
-  });
-
-  useEffect(() => {
-    // Clean up and save orders
-    const validOrders = orders.filter(order => order.id && order.id.trim() !== '');
-    if (validOrders.length !== orders.length) {
-      // If we filtered out invalid orders, update the state
-      setOrders(validOrders);
-    }
-    localStorage.setItem('orders', JSON.stringify(validOrders));
-  }, [orders]);
-
-  const addOrder = (order: Omit<Order, 'id'>) => {
-    // Remove existing order for the same date if it exists
-    setOrders(prev => {
-      const filtered = prev.filter(existingOrder => existingOrder.date !== order.date);
-      const newOrder = {
-        ...order,
-        id: crypto.randomUUID()
-      };
-      return [newOrder, ...filtered];
-    });
-  };
-
-  const deleteOrder = (id: string) => {
-    setOrders(prev => prev.filter(order => order.id !== id));
-  };
-
-  const updateOrder = (id: string, updatedOrder: Omit<Order, 'id'>) => {
-    setOrders(prev => prev.map(order => 
-      order.id === id ? { ...updatedOrder, id } : order
-    ));
-  };
-
-  const getAllOrders = () => {
-    // Filter out any orders with invalid IDs and validate essential fields
-    return orders.filter(order => 
-      order && 
-      order.id && 
-      order.id.trim() !== '' &&
-      order.date &&
-      typeof order.numberOfTiffins === 'number' &&
-      typeof order.totalAmount === 'number' &&
-      order.numberOfTiffins > 0 &&
-      order.totalAmount >= 0
-    );
-  };
-
-  const getOrdersByMonth = (month: string) => {
-    return orders.filter(order => order.date.startsWith(month));
-  };
-
-  const getTodayStats = () => {
-    const today = format(startOfDay(new Date()), 'yyyy-MM-dd');
-    const todayOrders = orders.filter(order => order.date === today);
-    
-    return {
-      orders: todayOrders.length,
-      tiffins: todayOrders.reduce((sum, order) => sum + order.numberOfTiffins, 0),
-      amount: todayOrders.reduce((sum, order) => sum + order.totalAmount, 0)
-    };
-  };
-
-  const getMonthlyStats = (month: string) => {
-    const monthOrders = getOrdersByMonth(month);
-    
-    return {
-      totalOrders: monthOrders.length,
-      totalTiffins: monthOrders.reduce((sum, order) => sum + order.numberOfTiffins, 0),
-      totalAmount: monthOrders.reduce((sum, order) => sum + order.totalAmount, 0)
-    };
-  };
-
-  const getTotalStats = () => {
-    const allOrders = getAllOrders();
-    
-    return {
-      totalOrders: allOrders.length,
-      totalTiffins: allOrders.reduce((sum, order) => sum + order.numberOfTiffins, 0),
-      totalAmount: allOrders.reduce((sum, order) => sum + order.totalAmount, 0)
-    };
-  };
-
-  return (
-    <OrderContext.Provider value={{ 
-      orders, 
-      addOrder, 
-      deleteOrder, 
-      updateOrder, 
-      getAllOrders, 
-      getOrdersByMonth, 
-      getTodayStats, 
-      getMonthlyStats,
-      getTotalStats
-    }}>
-      {children}
-    </OrderContext.Provider>
-  );
+/**
+ * Backward compatibility adapter for OrderContext.
+ * Re-routes calls to the unified AppContext.
+ */
+export function OrderProvider({ children }: { children: React.ReactNode }) {
+  return <>{children}</>;
 }
 
 export function useOrders() {
-  const context = useContext(OrderContext);
-  if (context === undefined) {
-    throw new Error('useOrders must be used within an OrderProvider');
-  }
-  return context;
+  const app = useApp();
+
+  return {
+    orders: app.orders,
+    addOrder: (order: LegacyOrderInput) => {
+      app.addOrder({
+        date: order.date,
+        numberOfTiffins: order.numberOfTiffins,
+        pricePerTiffin: order.pricePerTiffin,
+        mealType: order.mealType || 'single',
+        status: order.status || 'ordered',
+        notes: order.notes,
+        vendor: order.vendor
+      });
+    },
+    deleteOrder: (id: string) => app.deleteOrder(id),
+    updateOrder: (id: string, updatedOrder: Partial<Order>) => app.updateOrder(id, updatedOrder),
+    getAllOrders: () => app.orders,
+    getOrdersByMonth: (month: string) => app.orders.filter(o => o.date.startsWith(month)),
+    getTodayStats: () => {
+      const stats = app.getTodayStats();
+      return {
+        orders: stats.totalOrders,
+        tiffins: stats.totalTiffins,
+        amount: stats.totalAmount
+      };
+    },
+    getMonthlyStats: (month: string) => {
+      const stats = app.getMonthlyStats(month);
+      return {
+        totalOrders: stats.totalOrders,
+        totalTiffins: stats.totalTiffins,
+        totalAmount: stats.totalAmount
+      };
+    },
+    getTotalStats: () => {
+      const stats = app.getTotalStats();
+      return {
+        totalOrders: stats.totalOrders,
+        totalTiffins: stats.totalTiffins,
+        totalAmount: stats.totalAmount
+      };
+    }
+  };
 }

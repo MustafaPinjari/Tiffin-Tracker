@@ -147,7 +147,7 @@ export function mobileDataRepair(): DataReport {
         }
         return acc;
       }, [])
-      .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      .sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
 
     // Save repaired data
     localStorage.setItem('orders', JSON.stringify(repairedOrders));

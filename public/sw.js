@@ -1,137 +1,101 @@
-const CACHE_NAME = 'tiffin-tracker-v2'; // Updated version to clear old cache
-const urlsToCache = [
+const CACHE_NAME = 'tiffin-tracker-v3';
+const STATIC_ASSETS = [
   '/',
   '/index.html',
-  '/manifest.json'
+  '/manifest.json',
+  '/icon-192.png',
+  '/icon-512.png',
+  '/tiffinlogo.png'
 ];
 
-// Install event
+// Install: Pre-cache core shell
 self.addEventListener('install', event => {
   event.waitUntil(
-    caches.open(CACHE_NAME)
-      .then(cache => {
-        // Only cache files that exist, skip missing icons
-        return cache.addAll(urlsToCache.filter(url => {
-          // Skip caching in development mode (when localhost is detected)
-          if (self.location.hostname === 'localhost') {
-            return url === '/' || url === '/manifest.json';
-          }
-          return true;
-        }));
-      })
-      .catch(error => {
-        console.log('Cache install failed:', error);
-        // Don't fail the install if caching fails
-      })
+    caches.open(CACHE_NAME).then(cache => {
+      return cache.addAll(STATIC_ASSETS).catch(err => {
+        console.warn('Pre-caching non-fatal warning:', err);
+      });
+    })
   );
-  // Force the waiting service worker to become the active service worker
   self.skipWaiting();
 });
 
-// Activate event - clean up old caches
+// Activate: Clean up previous cache versions
 self.addEventListener('activate', event => {
   event.waitUntil(
     caches.keys().then(cacheNames => {
       return Promise.all(
-        cacheNames.map(cacheName => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
+        cacheNames
+          .filter(name => name !== CACHE_NAME)
+          .map(name => caches.delete(name))
       );
-    }).then(() => {
-      // Take control of all clients immediately
-      return self.clients.claim();
+    }).then(() => self.clients.claim())
+  );
+});
+
+// Fetch: Network-First for HTML navigation to prevent stale chunk 404s, Cache-First for static assets
+self.addEventListener('fetch', event => {
+  const request = event.request;
+
+  // Skip non-GET requests or browser extension schemes
+  if (request.method !== 'GET' || !request.url.startsWith(self.location.origin)) {
+    return;
+  }
+
+  // 1. Navigation requests (HTML pages) -> Network-First
+  if (request.mode === 'navigate' || request.headers.get('accept')?.includes('text/html')) {
+    event.respondWith(
+      fetch(request)
+        .then(response => {
+          if (response && response.status === 200) {
+            const clone = response.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          }
+          return response;
+        })
+        .catch(() => {
+          // If offline, serve cached index.html
+          return caches.match('/index.html') || caches.match('/');
+        })
+    );
+    return;
+  }
+
+  // 2. Static hashed assets (JS, CSS, images, icons) -> Stale-while-revalidate / Cache-First
+  event.respondWith(
+    caches.match(request).then(cachedResponse => {
+      const fetchPromise = fetch(request)
+        .then(networkResponse => {
+          if (networkResponse && networkResponse.status === 200) {
+            const clone = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => cache.put(request, clone));
+          }
+          return networkResponse;
+        })
+        .catch(() => cachedResponse);
+
+      return cachedResponse || fetchPromise;
     })
   );
 });
 
-// Fetch event
-self.addEventListener('fetch', event => {
-  // Skip caching for development files
-  if (event.request.url.includes('@vite') || 
-      event.request.url.includes('@react-refresh') ||
-      event.request.url.includes('src/') ||
-      event.request.url.includes('.tsx') ||
-      event.request.url.includes('.ts') ||
-      event.request.url.includes('node_modules')) {
-    return; // Let the browser handle these requests normally
+// Receive message from client to show notification
+self.addEventListener('message', event => {
+  if (event.data && event.data.type === 'SHOW_NOTIFICATION') {
+    const { title, options } = event.data;
+    self.registration.showNotification(title, options);
   }
-
-  event.respondWith(
-    caches.match(event.request)
-      .then(response => {
-        if (response) {
-          return response;
-        }
-        return fetch(event.request).catch(error => {
-          console.log('Fetch failed for:', event.request.url, error);
-          // Return a basic response for failed fetches
-          if (event.request.destination === 'image') {
-            // Return empty response for missing images
-            return new Response('', { status: 404 });
-          }
-          throw error;
-        });
-      })
-  );
 });
 
-// Handle notification clicks
-self.addEventListener('notificationclick', (event) => {
+// Notification click handling
+self.addEventListener('notificationclick', event => {
   event.notification.close();
-
-  if (event.action === 'order') {
-    // Open the app and navigate to home
-    event.waitUntil(
-      clients.matchAll().then((clientList) => {
-        if (clientList.length > 0) {
-          return clientList[0].focus();
-        }
-        return clients.openWindow('/');
-      })
-    );
-  } else if (event.action === 'skip') {
-    // Send message to main thread to update status
-    event.waitUntil(
-      clients.matchAll().then((clientList) => {
-        if (clientList.length > 0) {
-          clientList[0].postMessage({
-            action: 'skip',
-            date: new Date().toISOString().split('T')[0]
-          });
-        }
-      })
-    );
-  } else {
-    // Default click - open the app
-    event.waitUntil(
-      clients.matchAll().then((clientList) => {
-        if (clientList.length > 0) {
-          return clientList[0].focus();
-        }
-        return clients.openWindow('/');
-      })
-    );
-  }
-});
-
-// Handle push notifications (for future use)
-self.addEventListener('push', (event) => {
-  if (event.data) {
-    const data = event.data.json();
-    const options = {
-      body: data.body,
-      // Remove icon references since we don't have them
-      actions: [
-        { action: 'order', title: '📱 Order Now' },
-        { action: 'skip', title: '❌ Skip Today' }
-      ]
-    };
-
-    event.waitUntil(
-      self.registration.showNotification(data.title, options)
-    );
-  }
+  event.waitUntil(
+    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(clientList => {
+      if (clientList.length > 0) {
+        return clientList[0].focus();
+      }
+      return clients.openWindow('/');
+    })
+  );
 });

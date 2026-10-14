@@ -1,3 +1,5 @@
+import { cleanupOrdersData } from './dataCleanup';
+
 // Debug utility to inspect order data
 export function debugOrdersData() {
   try {
@@ -50,6 +52,5 @@ export function debugOrdersData() {
 
 // Function to manually trigger data cleanup
 export function forceCleanupOrders() {
-  const { cleanupOrdersData } = require('./dataCleanup');
   return cleanupOrdersData();
 }

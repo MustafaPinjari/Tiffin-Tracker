@@ -1,9 +1,7 @@
-import React, { forwardRef } from 'react';
-import { motion, HTMLMotionProps } from 'framer-motion';
+import React, { forwardRef, useId } from 'react';
 
-export interface InputProps extends Omit<HTMLMotionProps<'input'>, 'size'> {
-  size?: 'sm' | 'md' | 'lg';
-  variant?: 'default' | 'filled' | 'outlined';
+export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+  sizeVariant?: 'sm' | 'md' | 'lg';
   error?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
@@ -14,42 +12,23 @@ export interface InputProps extends Omit<HTMLMotionProps<'input'>, 'size'> {
 
 const inputSizes = {
   sm: {
-    input: 'px-3 py-2 text-sm h-8',
+    input: 'px-3 py-2 text-sm min-h-[38px]',
     icon: 'w-4 h-4',
   },
   md: {
-    input: 'px-4 py-3 text-sm h-10',
-    icon: 'w-4 h-4',
-  },
-  lg: {
-    input: 'px-4 py-4 text-base h-12',
+    input: 'px-4 py-2.5 text-base min-h-[44px]',
     icon: 'w-5 h-5',
   },
-} as const;
-
-const inputVariants = {
-  default: {
-    base: 'bg-gray-800 border border-gray-700 text-white',
-    focus: 'focus:border-blue-500 focus:ring-1 focus:ring-blue-500',
-    error: 'border-red-500 focus:border-red-500 focus:ring-red-500',
-  },
-  filled: {
-    base: 'bg-gray-800 border-0 text-white',
-    focus: 'focus:ring-2 focus:ring-blue-500',
-    error: 'bg-red-900/20 focus:ring-red-500',
-  },
-  outlined: {
-    base: 'bg-transparent border-2 border-gray-600 text-white',
-    focus: 'focus:border-blue-500 focus:ring-1 focus:ring-blue-500',
-    error: 'border-red-500 focus:border-red-500 focus:ring-red-500',
+  lg: {
+    input: 'px-4 py-3 text-lg min-h-[50px]',
+    icon: 'w-6 h-6',
   },
 } as const;
 
 export const Input = forwardRef<HTMLInputElement, InputProps>(
   (
     {
-      size = 'md',
-      variant = 'default',
+      sizeVariant = 'md',
       error = false,
       leftIcon,
       rightIcon,
@@ -57,88 +36,90 @@ export const Input = forwardRef<HTMLInputElement, InputProps>(
       helperText,
       errorText,
       className = '',
+      id,
       ...props
     },
     ref
   ) => {
-    const sizeStyles = inputSizes[size];
-    const variantStyles = inputVariants[variant];
-    
+    const generatedId = useId();
+    const inputId = id || generatedId;
+    const sizeStyles = inputSizes[sizeVariant];
+
     const inputClasses = [
-      // Base styles
-      'w-full rounded-xl transition-all duration-200',
-      'placeholder:text-gray-500',
-      'focus:outline-none',
+      'w-full rounded-xl transition-all duration-150',
+      'bg-[#0B1220] border text-[#EAF2FF] placeholder:text-[#71829C]',
+      'focus:outline-none focus:ring-2 focus:ring-[#38BDF8] focus:border-transparent',
       'disabled:opacity-50 disabled:cursor-not-allowed',
-      
-      // Variant styles
-      variantStyles.base,
-      error ? variantStyles.error : variantStyles.focus,
-      
-      // Size styles
+      error ? 'border-[#FB7185] focus:ring-[#FB7185]' : 'border-[#263751] hover:border-[#3B82F6]/40',
       sizeStyles.input,
-      
-      // Icon padding adjustments
-      leftIcon ? 'pl-10' : '',
-      rightIcon ? 'pr-10' : '',
-      
-      // Custom classes
+      leftIcon ? 'pl-11' : '',
+      rightIcon ? 'pr-11' : '',
       className,
     ].filter(Boolean).join(' ');
 
     const displayError = error && errorText;
-    const displayHelper = !displayError && helperText;
 
     return (
-      <div className="w-full">
+      <div className="w-full space-y-1.5">
         {label && (
-          <motion.label
-            className="block text-sm font-medium text-white mb-2"
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+          <label
+            htmlFor={inputId}
+            className="block text-xs font-semibold uppercase tracking-wider text-[#A8B7CE]"
           >
             {label}
-          </motion.label>
+          </label>
         )}
-        
-        <div className="relative">
+
+        <div className="relative flex items-center">
           {leftIcon && (
-            <div className={`absolute left-3 top-1/2 transform -translate-y-1/2 ${sizeStyles.icon} text-gray-400`}>
+            <span
+              className={`absolute left-3.5 text-[#71829C] pointer-events-none flex items-center justify-center ${sizeStyles.icon}`}
+            >
               {leftIcon}
-            </div>
+            </span>
           )}
-          
-          <motion.input
+
+          <input
             ref={ref}
+            id={inputId}
             className={inputClasses}
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+            aria-invalid={error}
+            aria-describedby={
+              displayError
+                ? `${inputId}-error`
+                : helperText
+                ? `${inputId}-helper`
+                : undefined
+            }
             {...props}
           />
-          
+
           {rightIcon && (
-            <div className={`absolute right-3 top-1/2 transform -translate-y-1/2 ${sizeStyles.icon} text-gray-400`}>
+            <span
+              className={`absolute right-3.5 text-[#71829C] flex items-center justify-center ${sizeStyles.icon}`}
+            >
               {rightIcon}
-            </div>
+            </span>
           )}
         </div>
-        
-        {(displayError || displayHelper) && (
-          <motion.div
-            className="mt-2"
-            initial={{ opacity: 0, y: -5 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.2 }}
+
+        {displayError && (
+          <p
+            id={`${inputId}-error`}
+            role="alert"
+            className="text-xs text-[#FB7185] font-medium"
           >
-            {displayError && (
-              <p className="text-sm text-red-400">{errorText}</p>
-            )}
-            {displayHelper && (
-              <p className="text-sm text-gray-500">{helperText}</p>
-            )}
-          </motion.div>
+            {errorText}
+          </p>
+        )}
+
+        {!displayError && helperText && (
+          <p
+            id={`${inputId}-helper`}
+            className="text-xs text-[#71829C]"
+          >
+            {helperText}
+          </p>
         )}
       </div>
     );

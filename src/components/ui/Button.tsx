@@ -1,84 +1,75 @@
 import React, { forwardRef } from 'react';
 import { motion, HTMLMotionProps } from 'framer-motion';
-import { animations } from '../../utils/animations';
 
 export interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'size'> {
-  variant?: 'primary' | 'secondary' | 'danger' | 'ghost' | 'outline';
-  size?: 'sm' | 'md' | 'lg' | 'xl';
+  variant?: 'primary' | 'secondary' | 'emerald' | 'danger' | 'ghost' | 'outline';
+  size?: 'sm' | 'md' | 'lg';
   fullWidth?: boolean;
   loading?: boolean;
   leftIcon?: React.ReactNode;
   rightIcon?: React.ReactNode;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const buttonVariants = {
   primary: {
-    base: 'bg-blue-600 text-white border-blue-600',
-    hover: 'hover:bg-blue-700 hover:border-blue-700',
-    active: 'active:bg-blue-800',
-    disabled: 'disabled:bg-blue-400 disabled:border-blue-400',
+    base: 'bg-[#2563EB] text-[#EAF2FF] border-[#2563EB] shadow-md shadow-[#2563EB]/25',
+    hover: 'hover:bg-[#3B82F6] hover:border-[#3B82F6]',
+    active: 'active:bg-[#1D4ED8]',
+    disabled: 'disabled:bg-[#17243A] disabled:border-[#263751] disabled:text-[#71829C]',
+  },
+  emerald: {
+    base: 'bg-[#34D399]/20 text-[#34D399] border-[#34D399]/40 shadow-sm',
+    hover: 'hover:bg-[#34D399]/30 hover:border-[#34D399]/60',
+    active: 'active:bg-[#34D399]/40',
+    disabled: 'disabled:bg-[#17243A] disabled:border-[#263751] disabled:text-[#71829C]',
   },
   secondary: {
-    base: 'bg-gray-800 text-white border-gray-800',
-    hover: 'hover:bg-gray-700 hover:border-gray-700',
-    active: 'active:bg-gray-900',
-    disabled: 'disabled:bg-gray-600 disabled:border-gray-600',
+    base: 'bg-[#17243A] text-[#EAF2FF] border-[#263751] shadow-sm',
+    hover: 'hover:bg-[#1E2E49] hover:border-[#3B82F6]/50',
+    active: 'active:bg-[#111B2E]',
+    disabled: 'disabled:bg-[#111B2E] disabled:border-[#263751] disabled:text-[#71829C]',
   },
   danger: {
-    base: 'bg-red-600 text-white border-red-600',
-    hover: 'hover:bg-red-700 hover:border-red-700',
-    active: 'active:bg-red-800',
-    disabled: 'disabled:bg-red-400 disabled:border-red-400',
+    base: 'bg-[#FB7185]/15 text-[#FB7185] border-[#FB7185]/30 shadow-sm',
+    hover: 'hover:bg-[#FB7185]/25 hover:border-[#FB7185]/50',
+    active: 'active:bg-[#FB7185]/35',
+    disabled: 'disabled:bg-[#111B2E] disabled:border-[#263751] disabled:text-[#71829C]',
   },
   ghost: {
-    base: 'bg-transparent text-gray-300 border-transparent',
-    hover: 'hover:bg-gray-800 hover:text-white',
-    active: 'active:bg-gray-900',
-    disabled: 'disabled:text-gray-600',
+    base: 'bg-transparent text-[#A8B7CE] border-transparent',
+    hover: 'hover:bg-[#17243A] hover:text-[#EAF2FF]',
+    active: 'active:bg-[#111B2E]',
+    disabled: 'disabled:text-[#71829C]',
   },
   outline: {
-    base: 'bg-transparent text-gray-300 border-gray-600',
-    hover: 'hover:bg-gray-800 hover:text-white hover:border-gray-500',
-    active: 'active:bg-gray-900',
-    disabled: 'disabled:text-gray-600 disabled:border-gray-700',
+    base: 'bg-transparent text-[#EAF2FF] border-[#263751]',
+    hover: 'hover:bg-[#17243A] hover:border-[#3B82F6]/50',
+    active: 'active:bg-[#111B2E]',
+    disabled: 'disabled:text-[#71829C] disabled:border-[#263751]',
   },
 } as const;
 
 const buttonSizes = {
   sm: {
-    padding: 'px-3 py-2',
-    text: 'text-sm',
-    height: 'h-8',
+    padding: 'px-3 py-1.5',
+    text: 'text-xs font-semibold',
+    minHeight: 'min-h-[36px]',
     iconSize: 'w-4 h-4',
   },
   md: {
-    padding: 'px-4 py-3',
-    text: 'text-sm',
-    height: 'h-10',
+    padding: 'px-4 py-2.5',
+    text: 'text-sm font-semibold',
+    minHeight: 'min-h-[44px]',
     iconSize: 'w-4 h-4',
   },
   lg: {
-    padding: 'px-6 py-4',
-    text: 'text-base',
-    height: 'h-12',
+    padding: 'px-6 py-3.5',
+    text: 'text-base font-bold',
+    minHeight: 'min-h-[50px]',
     iconSize: 'w-5 h-5',
   },
-  xl: {
-    padding: 'px-8 py-5',
-    text: 'text-lg',
-    height: 'h-14',
-    iconSize: 'w-6 h-6',
-  },
 } as const;
-
-const LoadingSpinner = ({ size }: { size: keyof typeof buttonSizes }) => (
-  <motion.div
-    className={`${buttonSizes[size].iconSize} border-2 border-current border-t-transparent rounded-full`}
-    animate={{ rotate: 360 }}
-    transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
-  />
-);
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
@@ -92,71 +83,46 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(
       children,
       disabled,
       className = '',
+      type = 'button',
       ...props
     },
     ref
   ) => {
     const variantStyles = buttonVariants[variant];
     const sizeStyles = buttonSizes[size];
-    
+
     const baseClasses = [
-      // Base styles
-      'inline-flex items-center justify-center',
-      'font-medium tracking-wide',
-      'border transition-all duration-200',
-      'rounded-2xl',
-      'focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 focus:ring-offset-black',
-      'disabled:cursor-not-allowed disabled:opacity-50',
-      
-      // Variant styles
+      'inline-flex items-center justify-center gap-2',
+      'rounded-xl border font-medium transition-all duration-150 select-none cursor-pointer',
+      'focus:outline-none focus-visible:ring-2 focus-visible:ring-[#38BDF8] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0B1220]',
+      'disabled:cursor-not-allowed',
       variantStyles.base,
       variantStyles.hover,
       variantStyles.active,
       variantStyles.disabled,
-      
-      // Size styles
       sizeStyles.padding,
       sizeStyles.text,
-      sizeStyles.height,
-      
-      // Width
+      sizeStyles.minHeight,
       fullWidth ? 'w-full' : '',
-      
-      // Custom classes
       className,
     ].filter(Boolean).join(' ');
-
-    const content = (
-      <>
-        {loading ? (
-          <LoadingSpinner size={size} />
-        ) : (
-          <>
-            {leftIcon && (
-              <span className={`${sizeStyles.iconSize} mr-2 flex-shrink-0`}>
-                {leftIcon}
-              </span>
-            )}
-            <span className="flex-1">{children}</span>
-            {rightIcon && (
-              <span className={`${sizeStyles.iconSize} ml-2 flex-shrink-0`}>
-                {rightIcon}
-              </span>
-            )}
-          </>
-        )}
-      </>
-    );
 
     return (
       <motion.button
         ref={ref}
+        type={type}
         className={baseClasses}
         disabled={disabled || loading}
-        {...animations.buttonHover}
+        whileTap={{ scale: disabled || loading ? 1 : 0.98 }}
         {...props}
       >
-        {content}
+        {loading ? (
+          <span className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin" />
+        ) : (
+          leftIcon && <span className={sizeStyles.iconSize}>{leftIcon}</span>
+        )}
+        <span>{children}</span>
+        {!loading && rightIcon && <span className={sizeStyles.iconSize}>{rightIcon}</span>}
       </motion.button>
     );
   }

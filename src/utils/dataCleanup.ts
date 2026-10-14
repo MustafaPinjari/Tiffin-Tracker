@@ -34,7 +34,7 @@ export function cleanupOrdersData() {
         }, []);
       
       // Sort by date descending
-      cleanedOrders.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+      cleanedOrders.sort((a: any, b: any) => new Date(b.date).getTime() - new Date(a.date).getTime());
       
       // Save cleaned data back
       localStorage.setItem('orders', JSON.stringify(cleanedOrders));
@@ -44,8 +44,7 @@ export function cleanupOrdersData() {
     }
   } catch (error) {
     console.error('Error cleaning up orders data:', error);
-    // If there's an error, clear the localStorage
-    localStorage.removeItem('orders');
+    // Never delete orders on catch - preserve whatever exists
   }
   
   return [];

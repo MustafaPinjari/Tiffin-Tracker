@@ -2,15 +2,28 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <!-- Favicon for browser tab -->
-    <link rel="icon" href="tiffinlogo.png" type="image/x-icon" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Tiffin Tracker</title>
-    <meta name="description" content="Track your daily tiffin orders and manage expenses" />
-    <meta name="theme-color" content="#4F46E5" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- Title & SEO -->
+    <title>Tiffin Tracker — Meal & Expense Manager</title>
+    <meta name="description" content="Track your daily tiffin meals, manage expenses, and monitor monthly food budgets." />
+    <meta name="theme-color" content="#0B1220" />
+    
+    <!-- Icons & Manifest -->
+    <link rel="icon" type="image/png" href="/icon-192.png" />
+    <link rel="apple-touch-icon" href="/icon-192.png" />
     <link rel="manifest" href="/manifest.json" />
+    
+    <!-- Mobile Web App (Android & Samsung Internet) -->
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Tiffin" />
+    
+    <!-- Apple Mobile Web App -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Tiffin" />
   </head>
-  <body>
+  <body class="bg-[#0B1220] text-[#EAF2FF] min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
